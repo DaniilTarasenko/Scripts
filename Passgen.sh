@@ -1,7 +1,26 @@
-!/bin/bash
-read -p "Введите количество паролей: " num_passwords
-read -p "Введите длину пароля: " password_length
-for i in $(seq 1 $num_passwords)
+#!/bin/bash
+
+password() {
+    result=""
+    length=$1
+    for (( i=0; i<$length; i++ ))
+    do
+        num=$(($(date +%N) & 126))
+        if [ $num -lt 33 ]
+        then
+            num=$(($num + 33 & 126))
+        fi
+        char=$(printf \\x$(printf '%x' $num))
+        result+=$char
+        sleep 1
+    done
+    echo $result
+}
+
+echo "How long do you want your password to be?"
+read -p "Length of password: " length_pas
+
+for i in {1..5}
 do
-    openssl rand -base64 48 | cut -c1-$password_length
+    password $length_pas
 done
